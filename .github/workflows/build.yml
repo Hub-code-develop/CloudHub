@@ -36,9 +36,37 @@ jobs:
           dotnet publish src/CloudHub.Desktop/CloudHub.Desktop.csproj
           -c Release -r osx-x64 --self-contained true
 
+      # dotnet publish 只平铺 DLL+apphost，不会自动生成 .app 包，这里手动包成标准 bundle
+      - name: Package .app bundle
+        run: |
+          set -euo pipefail
+          PUBLISH="src/CloudHub.Desktop/bin/Release/net10.0/osx-x64/publish"
+          APP="CloudHub.app"
+          rm -rf "$APP"
+          mkdir -p "$APP/Contents/MacOS"
+          cp -R "$PUBLISH/." "$APP/Contents/MacOS/"
+          cat > "$APP/Contents/Info.plist" <<'PLIST'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+            <dict>
+              <key>CFBundleName</key><string>CloudHub</string>
+              <key>CFBundleDisplayName</key><string>CloudHub</string>
+              <key>CFBundleIdentifier</key><string>com.codehub.cloudhub</string>
+              <key>CFBundleVersion</key><string>1.0.0</string>
+              <key>CFBundlePackageType</key><string>APPL</string>
+              <key>CFBundleExecutable</key><string>CloudHub</string>
+              <key>LSMinimumSystemVersion</key><string>10.15</string>
+              <key>NSHighResolutionCapable</key><true/>
+            </dict>
+          </plist>
+          PLIST
+          chmod +x "$APP/Contents/MacOS/CloudHub"
+          echo "Packaged $APP ($(du -sh "$APP" | cut -f1))"
+
       - name: Upload .app artifact
         uses: actions/upload-artifact@v4
         with:
           name: CloudHub-macos-x64
-          path: src/CloudHub.Desktop/bin/Release/net10.0/osx-x64/publish/CloudHub.app
+          path: CloudHub.app
           if-no-files-found: error
