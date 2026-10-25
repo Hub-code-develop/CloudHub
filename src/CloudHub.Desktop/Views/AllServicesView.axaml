@@ -1,0 +1,64 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:CloudHub.Desktop.ViewModels"
+             xmlns:conv="using:CloudHub.Desktop.Converters"
+             x:Class="CloudHub.Desktop.Views.AllServicesView">
+  <Grid RowDefinitions="Auto,*">
+    <!-- 顶部工具栏：搜索 + 类别筛选 -->
+    <Grid Grid.Row="0" ColumnDefinitions="*,Auto,Auto" Margin="24,18,24,8">
+      <TextBox Classes="search" Text="{Binding SearchText}" Watermark="搜索 Azure 服务（例如 虚拟机、Cosmos、Key Vault）" />
+      <ComboBox Grid.Column="1" Margin="8,0,0,0" MinWidth="160"
+                ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory}" />
+      <TextBlock Grid.Column="2" Margin="12,0,0,0" VerticalAlignment="Center" Classes="Muted"
+                 Text="{Binding Groups.Count, StringFormat='{}{0} 个分类'}" />
+    </Grid>
+
+    <!-- 主体：按分类分组展示的服务卡片 -->
+    <ScrollViewer Grid.Row="1" Margin="24,0,24,24">
+      <StackPanel Spacing="20">
+        <TextBlock Classes="Muted" HorizontalAlignment="Center" VerticalAlignment="Center"
+                   Text="{Binding EmptyHint}" TextWrapping="Wrap"
+                   IsVisible="{Binding EmptyHint, Converter={x:Static conv:StringNotEmptyConverter.Instance}}" />
+
+        <ItemsControl ItemsSource="{Binding Groups}">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <StackPanel Margin="0,0,0,4">
+                <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,8">
+                  <TextBlock Classes="SectionTitle" Text="{Binding CategoryName}" />
+                  <TextBlock Grid.Column="1" Classes="Muted" FontSize="12"
+                             Text="{Binding Items.Count, StringFormat='{}{0} 个服务'}" VerticalAlignment="Center" />
+                </Grid>
+
+                <ItemsControl ItemsSource="{Binding Items}">
+                  <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                      <WrapPanel />
+                    </ItemsPanelTemplate>
+                  </ItemsControl.ItemsPanel>
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                      <Button Margin="0,0,10,10" Padding="14,10" MinWidth="180" HorizontalContentAlignment="Left"
+                              Background="{DynamicResource ThemeControlMidBrush}"
+                              BorderBrush="{DynamicResource ThemeControlBorderBrush}" BorderThickness="1"
+                              CornerRadius="8"
+                              Command="{Binding OpenInPortalCommand, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType=UserControl}}"
+                              CommandParameter="{Binding}"
+                              ToolTip.Tip="在 Azure 门户中打开此服务">
+                        <StackPanel>
+                          <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextWrapping="Wrap" MaxWidth="190"
+                                     Foreground="{DynamicResource ThemeForegroundBrush}" />
+                          <TextBlock Classes="Muted" FontSize="11" Margin="0,4,0,0">在 Azure 门户打开 ›</TextBlock>
+                        </StackPanel>
+                      </Button>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </StackPanel>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </StackPanel>
+    </ScrollViewer>
+  </Grid>
+</UserControl>

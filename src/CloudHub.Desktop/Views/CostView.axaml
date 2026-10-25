@@ -1,0 +1,78 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:conv="using:CloudHub.Desktop.Converters"
+             x:Class="CloudHub.Desktop.Views.CostView">
+  <ScrollViewer Padding="24">
+    <StackPanel Spacing="16" MaxWidth="1000">
+      <Grid ColumnDefinitions="*,Auto">
+        <TextBlock Classes="Hero" Text="成本分析" VerticalAlignment="Center" />
+        <ComboBox Grid.Column="1" MinWidth="160"
+                  ItemsSource="{Binding Timeframes}" SelectedValue="{Binding SelectedTimeframe}"
+                  SelectedValueBinding="{Binding Value}">
+          <ComboBox.ItemTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding Label}" />
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
+      </Grid>
+
+      <TextBlock Text="{Binding Error}" Foreground="{DynamicResource Ch.Danger}" TextWrapping="Wrap"
+                 IsVisible="{Binding Error, Converter={x:Static conv:StringNotEmptyConverter.Instance}}" />
+
+      <Border Classes="Card">
+        <StackPanel>
+          <TextBlock Classes="Muted" Text="总实际成本" />
+          <TextBlock FontSize="34" FontWeight="Bold">
+            <Run Text="{Binding Currency}" /><Run Text=" " /><Run Text="{Binding Total, Converter={x:Static conv:DecimalConverter.Instance}}" />
+          </TextBlock>
+          <TextBlock Classes="Muted" FontSize="12"
+                     Text="{Binding SelectedTimeframe}" />
+        </StackPanel>
+      </Border>
+
+      <Grid ColumnDefinitions="*,*">
+        <Border Classes="Card">
+          <StackPanel>
+            <TextBlock Classes="SectionTitle" Text="按服务" />
+            <ItemsControl ItemsSource="{Binding ByService}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <StackPanel Margin="0,6">
+                    <Grid ColumnDefinitions="*,Auto">
+                      <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                      <TextBlock Grid.Column="1" Text="{Binding Cost, Converter={x:Static conv:DecimalConverter.Instance}}" FontWeight="SemiBold" />
+                    </Grid>
+                    <ProgressBar Maximum="1" Value="{Binding Share}" Height="6" Margin="0,4,0,0" />
+                  </StackPanel>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Border>
+
+        <Border Classes="Card" Grid.Column="1" Margin="16,0,0,0">
+          <StackPanel>
+            <TextBlock Classes="SectionTitle" Text="按资源组" />
+            <ItemsControl ItemsSource="{Binding ByResourceGroup}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <StackPanel Margin="0,6">
+                    <Grid ColumnDefinitions="*,Auto">
+                      <TextBlock Text="{Binding Name}" TextTrimming="CharacterEllipsis" />
+                      <TextBlock Grid.Column="1" Text="{Binding Cost, Converter={x:Static conv:DecimalConverter.Instance}}" FontWeight="SemiBold" />
+                    </Grid>
+                    <ProgressBar Maximum="1" Value="{Binding Share}" Height="6" Margin="0,4,0,0" />
+                  </StackPanel>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Border>
+      </Grid>
+
+      <TextBlock Classes="Muted" Text="{Binding EmptyHint}"
+                 IsVisible="{Binding EmptyHint, Converter={x:Static conv:StringNotEmptyConverter.Instance}}" />
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

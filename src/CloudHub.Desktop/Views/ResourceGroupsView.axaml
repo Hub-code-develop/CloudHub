@@ -1,0 +1,67 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:conv="using:CloudHub.Desktop.Converters"
+             x:Class="CloudHub.Desktop.Views.ResourceGroupsView">
+  <Grid RowDefinitions="Auto,Auto,*,Auto" Margin="24">
+    <Grid ColumnDefinitions="*,Auto">
+      <TextBlock Classes="Hero" Text="资源组" />
+      <Button Grid.Column="1" Classes="ghost" Command="{Binding RefreshCommand}" Content="刷新" />
+    </Grid>
+
+    <TextBlock Grid.Row="1" Classes="Muted" Text="{Binding Error}" Foreground="{DynamicResource Ch.Danger}" TextWrapping="Wrap"
+               IsVisible="{Binding Error, Converter={x:Static conv:StringNotEmptyConverter.Instance}}" Margin="0,4,0,8" />
+
+    <!-- 新建 -->
+    <Border Grid.Row="2" Classes="Card" Margin="0,0,0,12">
+      <Grid ColumnDefinitions="*,*,Auto" RowDefinitions="Auto,Auto" VerticalAlignment="Center">
+        <TextBlock Classes="SectionTitle" Grid.ColumnSpan="3" Text="新建资源组" />
+        <TextBox Grid.Row="1" Watermark="资源组名称（如 rg-prod）" Text="{Binding NewName}" />
+        <ComboBox Grid.Row="1" Grid.Column="1" Margin="8,0,0,0"
+                  ItemsSource="{Binding Locations}" SelectedValue="{Binding NewLocation}"
+                  SelectedValueBinding="{Binding Name}">
+          <ComboBox.ItemTemplate>
+            <DataTemplate>
+              <TextBlock Text="{Binding Label}" />
+            </DataTemplate>
+          </ComboBox.ItemTemplate>
+        </ComboBox>
+        <Button Grid.Row="1" Grid.Column="2" Classes="accent" Margin="8,0,0,0"
+                Command="{Binding CreateCommand}" Content="创建" IsEnabled="{Binding !IsCreating}" />
+      </Grid>
+    </Border>
+
+    <Border Grid.Row="3" Classes="Card">
+      <Grid RowDefinitions="Auto,*">
+        <TextBlock Classes="SectionTitle" Text="{Binding Items.Count, StringFormat='现有资源组 ({0})'}" />
+        <TextBlock Grid.Row="1" Classes="Muted" Text="{Binding EmptyHint}" TextWrapping="Wrap"
+                   IsVisible="{Binding EmptyHint, Converter={x:Static conv:StringNotEmptyConverter.Instance}}"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" />
+        <ScrollViewer Grid.Row="1">
+          <ItemsControl x:Name="RgList" ItemsSource="{Binding Items}" Tag="{Binding}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Grid ColumnDefinitions="*,Auto,Auto" Margin="0,6">
+                  <StackPanel>
+                    <TextBlock Text="{Binding Group.Name}" FontWeight="SemiBold" />
+                    <TextBlock Classes="Muted" FontSize="12"
+                               Text="{Binding Group.Location, StringFormat='位置：{0}'}" />
+                    <TextBlock Classes="Muted" FontSize="11"
+                               Text="{Binding Group.TagSummary}" TextTrimming="CharacterEllipsis" />
+                  </StackPanel>
+                  <Border Classes="StatusBadge" Background="{DynamicResource ThemeControlMidBrush}"
+                          Margin="8,0,0,0" Grid.Column="1">
+                    <TextBlock Text="{Binding ResourceCount, StringFormat='{}{0} 个资源'}" FontSize="12" />
+                  </Border>
+                  <Button Grid.Column="2" Classes="ghost" Foreground="{DynamicResource Ch.Danger}" Margin="8,0,0,0"
+                          Content="删除"
+                          Command="{Binding #RgList.Tag.DeleteCommand}"
+                          CommandParameter="{Binding}" />
+                </Grid>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+      </Grid>
+    </Border>
+  </Grid>
+</UserControl>

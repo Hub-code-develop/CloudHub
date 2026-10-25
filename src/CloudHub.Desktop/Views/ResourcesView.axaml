@@ -1,0 +1,74 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:conv="using:CloudHub.Desktop.Converters"
+             xmlns:vm="using:CloudHub.Desktop.ViewModels"
+             x:Class="CloudHub.Desktop.Views.ResourcesView">
+  <Grid ColumnDefinitions="*,420" RowDefinitions="Auto,Auto,*">
+    <Grid Grid.ColumnSpan="2" ColumnDefinitions="*,Auto,Auto,Auto" Margin="24,18,24,8">
+      <TextBox Classes="search" Text="{Binding FilterText}" />
+      <ComboBox Grid.Column="1" Margin="8,0,0,0" MinWidth="130"
+                ItemsSource="{Binding Categories}" SelectedItem="{Binding SelectedCategory}"
+                IsVisible="{Binding IsCategoryPickerVisible}" />
+      <ComboBox Grid.Column="2" Margin="8,0,0,0" MinWidth="170"
+                ItemsSource="{Binding TypeFilters}" SelectedItem="{Binding TypeFilter}" />
+      <Button Grid.Column="3" Classes="ghost" Margin="8,0,0,0"
+              Command="{Binding RefreshCommand}" Content="刷新" />
+    </Grid>
+
+    <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Margin="24,0,24,6"
+               Classes="Muted" Text="{Binding Error}" Foreground="{DynamicResource Ch.Danger}" TextWrapping="Wrap"
+               IsVisible="{Binding Error, Converter={x:Static conv:StringNotEmptyConverter.Instance}}" />
+
+    <!-- 资源列表 -->
+    <Border Grid.Row="2" Classes="Card" Margin="24,0,8,24">
+      <Grid RowDefinitions="Auto,*">
+        <TextBlock Classes="SectionTitle" Text="{Binding Items.Count, StringFormat='资源 ({0})'}" />
+        <TextBlock Grid.Row="1" Classes="Muted" Text="{Binding EmptyHint}" TextWrapping="Wrap"
+                   IsVisible="{Binding EmptyHint, Converter={x:Static conv:StringNotEmptyConverter.Instance}}"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" />
+        <ListBox Grid.Row="1" ItemsSource="{Binding Items}" SelectedItem="{Binding Selected}"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto" Background="Transparent" BorderThickness="0">
+          <ListBox.ItemTemplate>
+            <DataTemplate>
+              <Grid ColumnDefinitions="28,*,Auto" Margin="4">
+                <Border Width="22" Height="22" CornerRadius="5" Background="{DynamicResource SystemAccentColorLight2}"
+                        VerticalAlignment="Center">
+                  <TextBlock Text="{Binding Provider[0]}" HorizontalAlignment="Center" VerticalAlignment="Center"
+                             FontWeight="Bold" FontSize="12" />
+                </Border>
+                <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                  <TextBlock Text="{Binding Name}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                  <TextBlock Classes="Muted" FontSize="12"
+                             Text="{Binding Type, Converter={x:Static conv:ArmResourceTypeNameConverter.Instance}}"
+                             TextTrimming="CharacterEllipsis" />
+                  <TextBlock Classes="Muted" FontSize="11"
+                             Text="{Binding ResourceGroupName, StringFormat='资源组：{0} · {1}'}" />
+                </StackPanel>
+                <TextBlock Grid.Column="2" Classes="Muted" FontSize="12" VerticalAlignment="Center"
+                           Text="{Binding LocationOrGlobal}" />
+              </Grid>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </Grid>
+    </Border>
+
+    <!-- 详情 -->
+    <Border Grid.Row="2" Grid.Column="1" Classes="Card" Margin="8,0,24,24"
+            IsVisible="{Binding ShowDetail}">
+      <Grid RowDefinitions="Auto,*,Auto">
+        <Grid ColumnDefinitions="*,Auto">
+          <TextBlock Classes="SectionTitle" Text="详情" />
+          <Button Grid.Column="1" Classes="accent" Content="删除"
+                  Command="{Binding DeleteCommand}" CommandParameter="{Binding Selected}"
+                  IsEnabled="{Binding Selected, Converter={x:Static conv:NullToBoolConverter.Instance}}" />
+        </Grid>
+        <TextBox Grid.Row="1" IsReadOnly="True" FontFamily="Cascadia Code, Consolas, monospace"
+                 Text="{Binding DetailJson}" TextWrapping="Wrap" AcceptsReturn="True"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto" />
+        <TextBlock Grid.Row="2" Classes="Muted" FontSize="11"
+                   Text="{Binding Selected.Type, StringFormat='类型：{0}'}" Margin="0,8,0,0" />
+      </Grid>
+    </Border>
+  </Grid>
+</UserControl>

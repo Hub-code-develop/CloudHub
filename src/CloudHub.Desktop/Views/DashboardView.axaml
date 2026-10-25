@@ -1,0 +1,92 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="using:FluentAvalonia.UI.Controls"
+             xmlns:conv="using:CloudHub.Desktop.Converters"
+             x:Class="CloudHub.Desktop.Views.DashboardView">
+  <ScrollViewer Padding="24">
+    <StackPanel Spacing="18" MaxWidth="1100">
+      <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+        <StackPanel>
+          <TextBlock Classes="Hero" Text="概览" />
+          <TextBlock Classes="Muted" Text="{Binding SubscriptionName, StringFormat='订阅：{0}'}" />
+        </StackPanel>
+        <Button Classes="ghost" Command="{Binding RefreshCommand}" Content="刷新" />
+      </Grid>
+
+      <TextBlock Text="{Binding Error}" Foreground="{DynamicResource Ch.Danger}" TextWrapping="Wrap"
+                 IsVisible="{Binding Error, Converter={x:Static conv:StringNotEmptyConverter.Instance}}" />
+
+      <!-- 指标卡：等分栅格，随窗口拉伸（原来 WrapPanel 固定 220px 右侧留大空） -->
+      <Grid ColumnDefinitions="*,*,*,*" Margin="0,0,0,4">
+        <Border Classes="Card" Margin="0,0,14,0">
+          <StackPanel>
+            <TextBlock Classes="Muted" Text="资源总数" />
+            <TextBlock FontSize="28" FontWeight="Bold" Text="{Binding TotalResources}" />
+          </StackPanel>
+        </Border>
+        <Border Classes="Card" Grid.Column="1" Margin="0,0,14,0">
+          <StackPanel>
+            <TextBlock Classes="Muted" Text="资源组" />
+            <TextBlock FontSize="28" FontWeight="Bold" Text="{Binding TotalResourceGroups}" />
+          </StackPanel>
+        </Border>
+        <Border Classes="Card" Grid.Column="2" Margin="0,0,14,0">
+          <StackPanel>
+            <TextBlock Classes="Muted" Text="虚拟机（运行中 / 总数）" TextWrapping="Wrap" />
+            <TextBlock FontSize="28" FontWeight="Bold">
+              <Run Text="{Binding RunningVms}" /><Run Text=" / " /><Run Text="{Binding TotalVms}" />
+            </TextBlock>
+          </StackPanel>
+        </Border>
+        <Border Classes="Card" Grid.Column="3">
+          <StackPanel>
+            <TextBlock Classes="Muted" Text="本月成本" />
+            <TextBlock FontSize="28" FontWeight="Bold">
+              <Run Text="{Binding CostCurrency}" /><Run Text=" " /><Run Text="{Binding MonthCost, Converter={x:Static conv:DecimalConverter.Instance}}" />
+            </TextBlock>
+          </StackPanel>
+        </Border>
+      </Grid>
+
+      <!-- 分布 -->
+      <Grid ColumnDefinitions="*,*">
+        <Border Classes="Card">
+          <StackPanel>
+            <TextBlock Classes="SectionTitle" Text="按资源类型" />
+            <ItemsControl ItemsSource="{Binding TypeDistribution}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Grid ColumnDefinitions="*,Auto" Margin="0,4">
+                    <TextBlock Text="{Binding Label}" VerticalAlignment="Center" />
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="8">
+                      <TextBlock Text="{Binding Count}" VerticalAlignment="Center" FontWeight="SemiBold" />
+                    </StackPanel>
+                  </Grid>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Border>
+
+        <Border Classes="Card" Grid.Column="1" Margin="18,0,0,0">
+          <StackPanel>
+            <TextBlock Classes="SectionTitle" Text="按区域" />
+            <ItemsControl ItemsSource="{Binding LocationDistribution}">
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Grid ColumnDefinitions="*,Auto" Margin="0,4">
+                    <TextBlock Text="{Binding Label}" VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="1" Text="{Binding Count}" VerticalAlignment="Center" FontWeight="SemiBold" />
+                  </Grid>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+          </StackPanel>
+        </Border>
+      </Grid>
+
+      <TextBlock Classes="Muted" Text="{Binding EmptyHint}"
+                 IsVisible="{Binding EmptyHint, Converter={x:Static conv:StringNotEmptyConverter.Instance}}" />
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

@@ -1,0 +1,25 @@
+# === Build output ===
+[Dd]ebug/
+[Rr]elease/
+[Bb]in/
+[Oo]bj/
+
+# === Published app bundle (dist/CloudHub.app is a build artifact, not source) ===
+dist/
+
+# === IDE / editor ===
+.vs/
+.idea/
+*.user
+*.suo
+*.userprefs
+
+# === NuGet ===
+*.nupkg
+.nuget/
+
+# === macOS ===
+.DS_Store
+
+# === Logs ===
+*.log

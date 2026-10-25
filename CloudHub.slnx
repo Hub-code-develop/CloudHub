@@ -1,0 +1,6 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/CloudHub.Core/CloudHub.Core.csproj" />
+    <Project Path="src/CloudHub.Desktop/CloudHub.Desktop.csproj" />
+  </Folder>
+</Solution>

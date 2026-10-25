@@ -1,0 +1,61 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:conv="using:CloudHub.Desktop.Converters"
+             x:Class="CloudHub.Desktop.Views.SettingsView">
+  <ScrollViewer Padding="24">
+    <StackPanel Spacing="14" MaxWidth="720">
+      <TextBlock Classes="Hero" Text="设置" />
+
+      <Border Classes="Card">
+        <StackPanel Spacing="10">
+          <TextBlock Classes="SectionTitle" Text="云环境" />
+          <ComboBox ItemsSource="{Binding CloudOptions}" SelectedValue="{Binding Settings.CloudId}"
+                    SelectedValueBinding="{Binding Id}">
+            <ComboBox.ItemTemplate>
+              <DataTemplate>
+                <StackPanel>
+                  <TextBlock Text="{Binding DisplayName}" FontWeight="SemiBold" />
+                  <TextBlock Classes="Muted" FontSize="11" Text="{Binding Description}" />
+                </StackPanel>
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+          <TextBlock Classes="Muted" FontSize="11" Text="切换云环境 / 租户 / ClientId 后需要重启应用才能生效。" />
+        </StackPanel>
+      </Border>
+
+      <Border Classes="Card">
+        <StackPanel Spacing="10">
+          <TextBlock Classes="SectionTitle" Text="身份" />
+          <Grid ColumnDefinitions="Auto,*" RowDefinitions="Auto,Auto" VerticalAlignment="Center">
+            <TextBlock Grid.Row="0" Text="租户 ID" VerticalAlignment="Center" Margin="0,0,12,0" />
+            <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Settings.TenantId}" Watermark="common" />
+            <TextBlock Grid.Row="1" Text="Client ID" VerticalAlignment="Center" Margin="0,8,12,0" />
+            <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Settings.ClientId}" Margin="0,8,0,0" />
+          </Grid>
+          <Button Classes="accent" HorizontalAlignment="Left" Content="保存身份"
+                  Command="{Binding SaveIdentityCommand}" />
+        </StackPanel>
+      </Border>
+
+      <Border Classes="Card">
+        <StackPanel Spacing="10">
+          <TextBlock Classes="SectionTitle" Text="外观" />
+          <ComboBox ItemsSource="{Binding Themes}" SelectedValue="{Binding Settings.Theme}"
+                    SelectedValueBinding="{Binding}" />
+          <TextBlock Classes="Muted" FontSize="11" Text="Default = 跟随系统；Light / Dark = 固定浅色 / 深色。" />
+        </StackPanel>
+      </Border>
+
+      <Border Classes="Card">
+        <StackPanel Spacing="8">
+          <TextBlock Classes="SectionTitle" Text="账户" />
+          <Button Classes="ghost" HorizontalAlignment="Left" Foreground="{DynamicResource Ch.Danger}"
+                  Content="退出登录" Command="{Binding SignOutCommand}" />
+        </StackPanel>
+      </Border>
+
+      <TextBlock Classes="Muted" FontSize="11" Text="CloudHub · 一个更快的 Azure 桌面客户端" />
+    </StackPanel>
+  </ScrollViewer>
+</UserControl>

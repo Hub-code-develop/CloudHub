@@ -1,0 +1,80 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:conv="using:CloudHub.Desktop.Converters"
+             xmlns:ui="using:FluentAvalonia.UI.Controls"
+             x:Class="CloudHub.Desktop.Views.VirtualMachinesView">
+  <Grid RowDefinitions="Auto,Auto,*" Margin="24">
+    <Grid ColumnDefinitions="*,Auto">
+      <TextBlock Classes="Hero" Text="虚拟机" />
+      <Button Grid.Column="1" Classes="ghost" Command="{Binding RefreshCommand}" Content="刷新" />
+    </Grid>
+
+    <TextBlock Grid.Row="1" Classes="Muted" Text="{Binding Error}" Foreground="{DynamicResource Ch.Danger}" TextWrapping="Wrap"
+               IsVisible="{Binding Error, Converter={x:Static conv:StringNotEmptyConverter.Instance}}" Margin="0,4,0,8" />
+
+    <Border Grid.Row="2" Classes="Card">
+      <Grid RowDefinitions="Auto,*">
+        <TextBlock Classes="SectionTitle" Text="{Binding Items.Count, StringFormat='虚拟机 ({0})'}" />
+        <TextBlock Grid.Row="1" Classes="Muted" Text="{Binding EmptyHint}" TextWrapping="Wrap"
+                   IsVisible="{Binding EmptyHint, Converter={x:Static conv:StringNotEmptyConverter.Instance}}"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" />
+        <ScrollViewer Grid.Row="1">
+          <ItemsControl x:Name="VmList" ItemsSource="{Binding Items}" Tag="{Binding}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Grid ColumnDefinitions="*,Auto" Margin="0,8">
+                  <StackPanel>
+                    <Grid ColumnDefinitions="Auto,*">
+                      <Border Classes="StatusBadge"
+                              Background="{Binding PowerState.Code, Converter={x:Static conv:StatusColorConverter.Instance}, ConverterParameter=power}"
+                              Margin="0,0,8,0" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding PowerState.Display}" FontSize="11" FontWeight="SemiBold"
+                                   Foreground="White" />
+                      </Border>
+                      <TextBlock Grid.Column="1" Text="{Binding Name}" FontWeight="SemiBold"
+                                 FontSize="15" VerticalAlignment="Center" />
+                    </Grid>
+                    <TextBlock Classes="Muted" FontSize="12"
+                               Text="{Binding SizeLabel, StringFormat='规格：{0}'}" />
+                    <TextBlock Classes="Muted" FontSize="11"
+                               Text="{Binding SpecLabel, StringFormat='{}{0} · {1}'}" />
+                    <TextBlock Classes="Muted" FontSize="11"
+                               Text="{Binding ResourceGroupName, StringFormat='资源组：{0}'}" />
+                  </StackPanel>
+
+                  <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center" Spacing="4">
+                    <Button Classes="ghost" ToolTip.Tip="启动"
+                            Command="{Binding #VmList.Tag.StartCommand}"
+                            CommandParameter="{Binding}" IsEnabled="{Binding PowerState.IsSettled}">
+                      <ui:FASymbolIcon Symbol="{x:Static ui:FASymbol.Play}" />
+                    </Button>
+                    <Button Classes="ghost" ToolTip.Tip="重启"
+                            Command="{Binding #VmList.Tag.RestartCommand}"
+                            CommandParameter="{Binding}" IsEnabled="{Binding PowerState.IsRunning}">
+                      <ui:FASymbolIcon Symbol="{x:Static ui:FASymbol.Refresh}" />
+                    </Button>
+                    <Button Classes="ghost" ToolTip.Tip="停止"
+                            Command="{Binding #VmList.Tag.StopCommand}"
+                            CommandParameter="{Binding}" IsEnabled="{Binding PowerState.IsRunning}">
+                      <ui:FASymbolIcon Symbol="{x:Static ui:FASymbol.Stop}" />
+                    </Button>
+                    <Button Classes="ghost" ToolTip.Tip="解除分配"
+                            Command="{Binding #VmList.Tag.DeallocateCommand}"
+                            CommandParameter="{Binding}" IsEnabled="{Binding PowerState.IsRunning}">
+                      <ui:FASymbolIcon Symbol="{x:Static ui:FASymbol.Pause}" />
+                    </Button>
+                    <Button Classes="ghost" Foreground="{DynamicResource Ch.Danger}" ToolTip.Tip="删除"
+                            Command="{Binding #VmList.Tag.DeleteCommand}"
+                            CommandParameter="{Binding}">
+                      <ui:FASymbolIcon Symbol="{x:Static ui:FASymbol.Delete}" />
+                    </Button>
+                  </StackPanel>
+                </Grid>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+      </Grid>
+    </Border>
+  </Grid>
+</UserControl>

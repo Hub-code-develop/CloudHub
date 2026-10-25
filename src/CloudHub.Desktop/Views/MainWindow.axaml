@@ -1,0 +1,105 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ui="using:FluentAvalonia.UI.Controls"
+        xmlns:conv="using:CloudHub.Desktop.Converters"
+        xmlns:views="using:CloudHub.Desktop.Views"
+        x:Class="CloudHub.Desktop.Views.MainWindow"
+        Title="CloudHub"
+        Width="1180" Height="760" MinWidth="900" MinHeight="560">
+
+  <Grid>
+    <!-- 登录后主外壳 -->
+    <Grid IsVisible="{Binding IsSignedIn}" RowDefinitions="Auto,*">
+
+      <!-- 顶部栏 -->
+      <Border Grid.Row="0" Height="52" Background="{DynamicResource ThemeControlMidBrush}"
+              BorderBrush="{DynamicResource ThemeControlBorderBrush}" BorderThickness="0,0,0,1">
+        <Grid ColumnDefinitions="Auto,*,Auto" VerticalAlignment="Center" Margin="10,0">
+          <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+            <Button Classes="ghost" Width="38" Height="38" Command="{Binding TogglePaneCommand}">
+              <ui:FASymbolIcon Symbol="{x:Static ui:FASymbol.AllApps}" />
+            </Button>
+            <TextBlock Text="CloudHub" FontWeight="Bold" FontSize="16" VerticalAlignment="Center" />
+          </StackPanel>
+
+          <ComboBox Grid.Column="1" MinWidth="240" MaxWidth="360" HorizontalAlignment="Left" Margin="12,0"
+                    ItemsSource="{Binding Subscriptions}" SelectedValue="{Binding SelectedSubscription}"
+                    SelectedValueBinding="{Binding Id}" ToolTip.Tip="选择要操作的 Azure 订阅（已跨全部目录枚举）">
+            <ComboBox.ItemTemplate>
+              <DataTemplate>
+                <StackPanel>
+                  <TextBlock Text="{Binding DisplayName}" />
+                  <TextBlock Classes="Muted" FontSize="11"
+                             Text="{Binding TenantId, StringFormat='租户 {0}'}" />
+                </StackPanel>
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+
+          <StackPanel Grid.Column="2" Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+            <TextBox Width="220" Classes="search" Text="{Binding SearchText, Mode=TwoWay}"
+                     x:Name="SearchBox" KeyDown="SearchBox_KeyDown" />
+            <Button Classes="ghost" Width="38" Height="38" Command="{Binding SearchCommand}">
+              <ui:FASymbolIcon Symbol="{x:Static ui:FASymbol.Zoom}" />
+            </Button>
+            <Button Classes="ghost" Width="38" Height="38" Command="{Binding ToggleThemeCommand}"
+                    ToolTip.Tip="{Binding ThemeLabel}">
+              <ui:FASymbolIcon Symbol="{x:Static ui:FASymbol.Settings}" />
+            </Button>
+            <Border Width="34" Height="34" CornerRadius="17"
+                    Background="{DynamicResource SystemAccentColor}" ToolTip.Tip="{Binding Account.Description}">
+              <TextBlock Text="{Binding Account.Initial}" Foreground="White" HorizontalAlignment="Center"
+                         VerticalAlignment="Center" FontWeight="Bold" />
+            </Border>
+            <Button Classes="ghost" Width="38" Height="38" Command="{Binding SignOutCommand}"
+                    ToolTip.Tip="退出登录">
+              <ui:FASymbolIcon Symbol="{x:Static ui:FASymbol.Cancel}" />
+            </Button>
+          </StackPanel>
+        </Grid>
+      </Border>
+
+      <!-- 主体：导航 + 内容 -->
+      <SplitView Grid.Row="1" DisplayMode="Inline" IsPaneOpen="{Binding IsPaneOpen}"
+                 PaneBackground="{DynamicResource ThemeControlMidBrush}">
+        <SplitView.Pane>
+          <Grid RowDefinitions="*,Auto">
+            <ListBox Classes="nav" ItemsSource="{Binding NavItems}"
+                     SelectedValue="{Binding SelectedNavTag}" SelectedValueBinding="{Binding Tag}">
+              <ListBox.ItemTemplate>
+                <DataTemplate>
+                  <Grid ColumnDefinitions="24,*" IsVisible="{Binding !IsFooter}">
+                    <ui:FASymbolIcon Grid.Column="0" Symbol="{Binding Icon}" VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="1" Margin="12,0,0,0" Text="{Binding Title}" VerticalAlignment="Center" />
+                  </Grid>
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+
+            <!-- 固定高度：放任 Auto 行会让 ListBox 按全部项测量高度（隐藏项也计入），挤掉主导航 -->
+            <ListBox Grid.Row="1" Classes="nav" Height="56" ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                     ItemsSource="{Binding NavItems}"
+                     SelectedValue="{Binding SelectedNavTag}" SelectedValueBinding="{Binding Tag}">
+              <ListBox.ItemTemplate>
+                <DataTemplate>
+                  <Grid ColumnDefinitions="24,*" IsVisible="{Binding IsFooter}">
+                    <ui:FASymbolIcon Grid.Column="0" Symbol="{Binding Icon}" VerticalAlignment="Center" />
+                    <TextBlock Grid.Column="1" Margin="12,0,0,0" Text="{Binding Title}" VerticalAlignment="Center" />
+                  </Grid>
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+          </Grid>
+        </SplitView.Pane>
+
+        <SplitView.Content>
+          <ContentControl Content="{Binding CurrentView}" />
+        </SplitView.Content>
+      </SplitView>
+    </Grid>
+
+    <!-- 未登录：登录页 -->
+    <views:LoginView x:Name="LoginControl"
+                    IsVisible="{Binding IsSignedIn, Converter={x:Static conv:InvertedBoolToVisibilityConverter.Instance}}" />
+  </Grid>
+</Window>

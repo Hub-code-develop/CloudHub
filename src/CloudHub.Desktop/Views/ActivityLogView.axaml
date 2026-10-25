@@ -1,0 +1,55 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:conv="using:CloudHub.Desktop.Converters"
+             x:Class="CloudHub.Desktop.Views.ActivityLogView">
+  <Grid RowDefinitions="Auto,Auto,*" Margin="24">
+    <Grid ColumnDefinitions="*,Auto">
+      <TextBlock Classes="Hero" Text="活动日志" VerticalAlignment="Center" />
+      <ComboBox Grid.Column="1" MinWidth="160"
+                ItemsSource="{Binding Ranges}" SelectedValue="{Binding SelectedSpan}"
+                SelectedValueBinding="{Binding Span}">
+        <ComboBox.ItemTemplate>
+          <DataTemplate>
+            <TextBlock Text="{Binding Label}" />
+          </DataTemplate>
+        </ComboBox.ItemTemplate>
+      </ComboBox>
+    </Grid>
+
+    <TextBlock Grid.Row="1" Classes="Muted" Text="{Binding Error}" Foreground="{DynamicResource Ch.Danger}" TextWrapping="Wrap"
+               IsVisible="{Binding Error, Converter={x:Static conv:StringNotEmptyConverter.Instance}}" Margin="0,4,0,8" />
+
+    <Border Grid.Row="2" Classes="Card">
+      <Grid RowDefinitions="Auto,*">
+        <TextBlock Classes="SectionTitle" Text="{Binding Items.Count, StringFormat='事件 ({0})'}" />
+        <TextBlock Grid.Row="1" Classes="Muted" Text="{Binding EmptyHint}" TextWrapping="Wrap"
+                   IsVisible="{Binding EmptyHint, Converter={x:Static conv:StringNotEmptyConverter.Instance}}"
+                   HorizontalAlignment="Center" VerticalAlignment="Center" TextAlignment="Center" />
+        <ScrollViewer Grid.Row="1">
+          <ItemsControl ItemsSource="{Binding Items}">
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Grid ColumnDefinitions="Auto,*,Auto" Margin="0,6">
+                  <Border Classes="StatusBadge"
+                          Background="{Binding Status, Converter={x:Static conv:StatusColorConverter.Instance}, ConverterParameter=status}"
+                          VerticalAlignment="Top">
+                    <TextBlock Text="{Binding Status}" FontSize="11" FontWeight="SemiBold" Foreground="White" />
+                  </Border>
+                  <StackPanel Grid.Column="1" Margin="10,0,0,0">
+                    <TextBlock Text="{Binding OperationName}" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" />
+                    <TextBlock Classes="Muted" FontSize="11"
+                               Text="{Binding ResourceGroupName, StringFormat='资源组：{0}'}" />
+                    <TextBlock Classes="Muted" FontSize="11"
+                               Text="{Binding Caller, StringFormat='操作者：{0}'}" />
+                  </StackPanel>
+                  <TextBlock Grid.Column="2" Classes="Muted" FontSize="11" VerticalAlignment="Top"
+                             Text="{Binding TimeLabel}" />
+                </Grid>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </ScrollViewer>
+      </Grid>
+    </Border>
+  </Grid>
+</UserControl>

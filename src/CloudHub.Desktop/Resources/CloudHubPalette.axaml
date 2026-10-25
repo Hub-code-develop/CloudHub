@@ -1,0 +1,40 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+  <!--
+    CloudHub 自有调色板：随 ThemeVariant 切换。
+    不再依赖 FluentAvalonia 的语义色 + Opacity hack（深色下会出对比度灾难）。
+    键统一用 Ch. 前缀，避免与 FA / Fluent 资源冲突。
+  -->
+
+  <ResourceDictionary.ThemeDictionaries>
+
+    <ResourceDictionary x:Key="Light">
+      <SolidColorBrush x:Key="Ch.TextPrimary" Color="#1A1A1A" />
+      <SolidColorBrush x:Key="Ch.TextMuted" Color="#6B6B6B" />
+      <SolidColorBrush x:Key="Ch.CardBg" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="Ch.CardBorder" Color="#E2E2E2" />
+      <SolidColorBrush x:Key="Ch.Hairline" Color="#EAEAEA" />
+      <SolidColorBrush x:Key="Ch.Danger" Color="#C42B1C" />
+      <SolidColorBrush x:Key="Ch.DangerBg" Color="#14C42B1C" />
+      <SolidColorBrush x:Key="Ch.OnAccent" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="Ch.StatusRunning" Color="#107C10" />
+      <SolidColorBrush x:Key="Ch.StatusStopped" Color="#767676" />
+    </ResourceDictionary>
+
+    <ResourceDictionary x:Key="Dark">
+      <SolidColorBrush x:Key="Ch.TextPrimary" Color="#F3F3F3" />
+      <SolidColorBrush x:Key="Ch.TextMuted" Color="#A8A8A8" />
+      <SolidColorBrush x:Key="Ch.CardBg" Color="#2A2A2A" />
+      <SolidColorBrush x:Key="Ch.CardBorder" Color="#4A4A4A" />
+      <SolidColorBrush x:Key="Ch.Hairline" Color="#3D3D3D" />
+      <SolidColorBrush x:Key="Ch.Danger" Color="#FF8A80" />
+      <SolidColorBrush x:Key="Ch.DangerBg" Color="#26FF8A80" />
+      <SolidColorBrush x:Key="Ch.OnAccent" Color="#FFFFFF" />
+      <SolidColorBrush x:Key="Ch.StatusRunning" Color="#6CCB5F" />
+      <SolidColorBrush x:Key="Ch.StatusStopped" Color="#9A9A9A" />
+    </ResourceDictionary>
+
+  </ResourceDictionary.ThemeDictionaries>
+
+</ResourceDictionary>

@@ -1,0 +1,15 @@
+<Project>
+
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <InvariantGlobalization>false</InvariantGlobalization>
+    <AvaloniaVersion>12.1.2</AvaloniaVersion>
+    <FluentAvaloniaVersion>3.1.0</FluentAvaloniaVersion>
+    <!-- 关闭编译期绑定，避免模板/父级绑定在编译期报错（技能第 2 条建议） -->
+    <AvaloniaUseCompiledBindingsByDefault>false</AvaloniaUseCompiledBindingsByDefault>
+  </PropertyGroup>
+
+</Project>

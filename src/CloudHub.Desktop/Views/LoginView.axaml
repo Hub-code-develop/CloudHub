@@ -1,0 +1,52 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:ui="using:FluentAvalonia.UI.Controls"
+             xmlns:conv="using:CloudHub.Desktop.Converters"
+             x:Class="CloudHub.Desktop.Views.LoginView">
+  <Grid Background="{DynamicResource ThemeBackgroundBrush}">
+    <Border Classes="Card" MaxWidth="460" VerticalAlignment="Center" HorizontalAlignment="Center" Padding="28">
+      <StackPanel Spacing="14">
+        <StackPanel Orientation="Horizontal" Spacing="12" HorizontalAlignment="Center">
+          <Border Width="40" Height="40" CornerRadius="10" Background="{DynamicResource SystemAccentColor}">
+            <ui:FASymbolIcon Symbol="{x:Static ui:FASymbol.Cloud}"
+                              Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" />
+          </Border>
+          <TextBlock FontSize="26" FontWeight="Bold" VerticalAlignment="Center" Text="CloudHub" />
+        </StackPanel>
+
+        <TextBlock TextAlignment="Center" Classes="Muted" TextWrapping="Wrap"
+                   Text="一个更快的 Azure 桌面客户端。点击下方按钮，用设备代码登录你的账号。" />
+
+        <!-- 初始：登录按钮 -->
+        <Button x:Name="LoginButton" Classes="accent" HorizontalAlignment="Stretch" Height="40"
+                Content="使用设备代码登录" Click="LoginButton_Click" />
+
+        <!-- 设备代码流程 -->
+        <StackPanel x:Name="CodePanel" IsVisible="False" Spacing="10">
+          <TextBlock Text="1. 复制下面的代码" FontWeight="SemiBold" />
+          <Grid ColumnDefinitions="*,Auto">
+            <Border Classes="Card" Padding="10">
+              <TextBlock x:Name="CodeText" FontSize="22" FontWeight="Bold" LetterSpacing="2"
+                         HorizontalAlignment="Center" Text="— — — —" />
+            </Border>
+            <Button Grid.Column="1" Classes="ghost" Margin="8,0,0,0" Content="复制"
+                    Click="CopyCode_Click" />
+          </Grid>
+
+          <TextBlock Text="2. 打开浏览器访问以下地址并输入代码" FontWeight="SemiBold" />
+          <Button Classes="ghost" HorizontalContentAlignment="Left"
+                  Content="在浏览器中打开登录页" Click="OpenBrowser_Click" />
+
+          <TextBlock Text="3. 登录完成后，这里会自动继续…" Classes="Muted" />
+
+          <ProgressBar x:Name="WaitBar" IsIndeterminate="True" Height="6" />
+          <TextBlock x:Name="StatusText" Classes="Muted" TextWrapping="Wrap" />
+          <Button Classes="ghost" HorizontalAlignment="Left" Content="取消" Click="Cancel_Click" />
+        </StackPanel>
+
+        <TextBlock x:Name="ErrorText" Foreground="{DynamicResource Ch.Danger}" TextWrapping="Wrap"
+                   IsVisible="{Binding #ErrorText.Text, Converter={x:Static conv:StringNotEmptyConverter.Instance}}" />
+      </StackPanel>
+    </Border>
+  </Grid>
+</UserControl>
