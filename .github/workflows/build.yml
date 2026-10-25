@@ -19,7 +19,9 @@ env:
 jobs:
   build-macos:
     name: Build macOS .app (x64, self-contained)
-    runs-on: macos-13
+    # macos-latest = arm64 机型，队列通常比快被弃用的 macos-13(x64) 短得多；
+    # 仍发布 osx-x64，产物保持 x64 .app，与你本地一致。
+    runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
