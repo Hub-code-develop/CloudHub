@@ -284,7 +284,15 @@ public sealed class ArmClient : IDisposable
 
     private Uri BuildUri(string pathOrUrl)
     {
-        if (Uri.TryCreate(pathOrUrl, UriKind.Absolute, out var absolute))
+        // 注意：.NET 在部分运行时上会把以 '/' 开头的相对路径（如 "/subscriptions?..."）
+        // 当作 UriKind.Absolute 解析成功，但得到的其实是“没有 scheme 的相对 Uri”。
+        // 这种 Uri 交给 SocketsHttpHandler 会被当成 file:// 本地路径而抛
+        // “The 'file' scheme is not supported”。因此这里必须额外确认它是带 http/https
+        // scheme 的真正绝对 URI，否则一律拼上 Endpoint 前缀。
+        if (!string.IsNullOrEmpty(pathOrUrl)
+            && Uri.TryCreate(pathOrUrl, UriKind.Absolute, out var absolute)
+            && absolute.IsAbsoluteUri
+            && (absolute.Scheme == Uri.UriSchemeHttp || absolute.Scheme == Uri.UriSchemeHttps))
         {
             return absolute;
         }
